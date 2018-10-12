@@ -1,12 +1,9 @@
 defmodule ControlFlow do
-  # defmacro my_if(expr, do: if_block), do: if(expr, do: if_block, else: nil)
-  defmacro my_if(expr, do: if_block) do
-    quote do
-      if(unquote(expr), do: unquote(if_block), else: nil)
-    end
-  end
+  defmacro my_if(expr, clauses), do: do_my_if(expr, clauses)
 
-  defmacro my_if(expr, do: if_block, else: else_block) do
+  defp do_my_if(expr, do: if_block), do: do_my_if(expr, do: if_block, else: nil)
+
+  defp do_my_if(expr, do: if_block, else: else_block) do
     quote do
       case unquote(expr) do
         result when result in [false, nil] -> unquote(else_block)
