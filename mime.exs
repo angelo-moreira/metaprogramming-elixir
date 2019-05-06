@@ -1,5 +1,5 @@
 defmodule Mime do
-  extensions_file = Path.join([__DIR__, "mimes.txt"])
+  @external_resource extensions_file = Path.join([__DIR__, "mimes.txt"])
 
   for line <- File.stream!(extensions_file, [], :line) do
     [type, rest] = line |> String.split("\t") |> Enum.map(&String.strip/1)
