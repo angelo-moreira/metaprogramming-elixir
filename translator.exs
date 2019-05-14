@@ -52,8 +52,22 @@ defmodule Translator do
   end
 
   defp interpolate(string) do
-    # TBD interpolate bindings within string
-    string
+    ~r/(?<head>)%{[^}]+}(?<tail>)/
+    |> Regex.split(string, on: [:head, :tail])
+    |> Enum.reduce("", fn
+      <<"%{" <> rest>>, acc ->
+        key =
+          rest
+          |> String.trim_trailing("}")
+          |> String.to_atom()
+
+        quote do
+          unquote(acc) <> to_string(Map.fetch!(bindings, unquote(key)))
+        end
+
+      segment, acc ->
+        quote do: unquote(acc) <> unquote(segment)
+    end)
   end
 
   defp append_path("", next), do: to_string(next)
